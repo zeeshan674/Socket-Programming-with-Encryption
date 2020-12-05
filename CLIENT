@@ -1,0 +1,47 @@
+from Crypto.Util.Padding import pad
+from Crypto.Cipher import AES
+from base64 import b64encode
+import socket
+
+HEADER = 64
+PORT = 5050
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+SERVER = "127.0.1.1"
+ADDR = (SERVER, PORT)
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
+
+key = input('Please Insert the Password = ')
+key = key.encode('UTF-8')
+key = pad(key, AES.block_size)
+
+
+def encrypt(file_name, key):
+    with open(file_name, 'rb') as entry:
+        data = entry.read()
+        cipher = AES.new(key, AES.MODE_CFB)
+        ciphertext = cipher.encrypt(pad(data, AES.block_size))
+        iv = b64encode(cipher.iv).decode('UTF-8')
+        ciphertext = b64encode(ciphertext).decode('UTF-8')
+        to_write = iv + ciphertext
+        send(to_write)
+        entry.close()
+
+def send(msg):
+    message = msg.encode(FORMAT)
+    #print({message})
+    msg_length = len(message)
+    #print(msg_length)
+    send_length = str(msg_length).encode(FORMAT)
+    print(send_length)
+    send_length += b' ' * (HEADER - len(send_length))
+    print(send_length)
+    client.send(send_length)
+    client.send(message)
+    print(client.recv(2048).decode(FORMAT))
+
+encrypt('anon234.jpeg', key)
+
+send(DISCONNECT_MESSAGE)
