@@ -1,0 +1,3 @@
+# Socket-Programming-with-Encryption
+Hello there, I have the running codes of socket programming and encryption/ Decryption. Now I want to send the encrypted code to the server and decrypt that data on the server side and then make a file on the servver side...
+For this purpose, I mergerd boht codes but i am getting a warning of getpass and i cann't resolve that problem. kindly, need help.
